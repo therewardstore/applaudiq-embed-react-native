@@ -1,5 +1,9 @@
 # ApplaudIQ Embed SDK — React Native
 
+[![npm](https://img.shields.io/npm/v/@applaudiq/embed-react-native.svg)](https://www.npmjs.com/package/@applaudiq/embed-react-native)
+
+📦 **npm:** [`@applaudiq/embed-react-native`](https://www.npmjs.com/package/@applaudiq/embed-react-native)
+
 Embed the Applaud IQ recognition portal in a **React Native** app (bare RN CLI **or** Expo) with auto-login,
 manual login, and native SSO. The SDK renders the portal in a `react-native-webview` and mirrors the iOS / Android
 / Web SDK bridge protocol.
