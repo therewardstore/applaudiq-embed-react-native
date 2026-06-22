@@ -9,6 +9,10 @@ All notable changes to `@applaudiq/embed-react-native` are documented here. This
 Flutter) — documentation & packaging refresh (README example deep-links, a Changelog section; maintainer-only
 files removed from the public repo). No public API changes.
 
+- Build output is now a flat `tsc` layout (`lib/index.js` + `lib/index.d.ts`), replacing the
+  `react-native-builder-bob` three-folder output (`lib/commonjs` · `lib/module` · `lib/typescript`). The public
+  API and `src/index.tsx` (the Metro source consumers bundle) are unchanged.
+
 ## [1.0.0]
 
 First published release — full parity with the iOS + Android SDKs, for **bare React Native and Expo**.
