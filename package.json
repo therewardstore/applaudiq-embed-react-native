@@ -1,6 +1,6 @@
 {
   "name": "@applaudiq/embed-react-native",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "React Native SDK to embed the Applaud IQ recognition portal (auto + manual login, native SSO). Works with bare React Native and Expo.",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",

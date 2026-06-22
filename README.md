@@ -20,9 +20,9 @@ manual login, and native SSO. The SDK renders the portal in a `react-native-webv
 ### 1. Install
 
 ```sh
-npm install @applaudiq/embed-react-native@^1.0.0 react-native-webview
+npm install @applaudiq/embed-react-native@^1.1.0 react-native-webview
 # or
-yarn add @applaudiq/embed-react-native@^1.0.0 react-native-webview
+yarn add @applaudiq/embed-react-native@^1.1.0 react-native-webview
 ```
 
 `react-native-webview` is a peer dependency. **Bare RN:** `cd ios && pod install`. **Expo:** `npx expo install
@@ -139,7 +139,7 @@ trustworthy embed out of the box:
 - A brand-new employee signs in but sees a **pending HR approval** screen until an HR admin approves them
   (`onAuthPending` fires).
 - Runnable examples (bare RN **and** Expo) live in
-  [`applaudiq-sdk-example`](https://github.com/therewardstore/applaudiq-sdk-example) under
+  [`applaudiq-sdk-example`](https://github.com/therewardstore/applaudiq-sdk-example/tree/master/native-integration/react-native-cli) under
   `native-integration/react-native-cli/` and `native-integration/react-native-expo/`.
 
 ## Go-live checklist
@@ -168,9 +168,10 @@ trustworthy embed out of the box:
 
 ---
 
-## Publishing (maintainers)
+## Changelog
 
-Releases use [release-it](https://github.com/release-it/release-it): update `CHANGELOG.md`, commit, then
-`npm run release`. See **[RELEASE.md](./RELEASE.md)** for the full flow (npm org, tokens, dry-run).
+Latest: **v1.1.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
+
+---
 
 MIT licensed. Peer deps: `react`, `react-native`, `react-native-webview`.

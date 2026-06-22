@@ -3,6 +3,12 @@
 All notable changes to `@applaudiq/embed-react-native` are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0]
+
+**Long-Term Support (LTS) release.** Unified 1.1.0 across the SDK family (Web · iOS · Android · React Native ·
+Flutter) — documentation & packaging refresh (README example deep-links, a Changelog section; maintainer-only
+files removed from the public repo). No public API changes.
+
 ## [1.0.0]
 
 First published release — full parity with the iOS + Android SDKs, for **bare React Native and Expo**.
