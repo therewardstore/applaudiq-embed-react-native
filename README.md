@@ -20,9 +20,9 @@ manual login, and native SSO. The SDK renders the portal in a `react-native-webv
 ### 1. Install
 
 ```sh
-npm install @applaudiq/embed-react-native@^1.1.0 react-native-webview
+npm install @applaudiq/embed-react-native@^1.1.1 react-native-webview
 # or
-yarn add @applaudiq/embed-react-native@^1.1.0 react-native-webview
+yarn add @applaudiq/embed-react-native@^1.1.1 react-native-webview
 ```
 
 `react-native-webview` is a peer dependency. **Bare RN:** `cd ios && pod install`. **Expo:** `npx expo install
@@ -170,7 +170,7 @@ trustworthy embed out of the box:
 
 ## Changelog
 
-Latest: **v1.1.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
+Latest: **v1.1.1 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
 
 ---
 

@@ -132,12 +132,17 @@ function isSsoCallback(url: string | null, callback: string | undefined): boolea
 
 /** Pull a single decoded query param from the callback deep link; null otherwise. */
 function callbackParam(url: string, key: 'code' | 'error'): string | null {
-  const m = url.match(new RegExp(`[?&]${key}=([^&]+)`));
+  // Stop at `&` AND `#`: the browser/OS appends an empty `#` fragment to the custom-scheme callback,
+  // and a query value never contains a raw `#` (it'd be %23), so the fragment must not be captured.
+  const m = url.match(new RegExp(`[?&]${key}=([^&#]+)`));
   if (!m || !m[1]) return null;
+  // Query values encode spaces as `+` (form-urlencoding); decodeURIComponent only handles `%20`, so
+  // normalize `+`→space first or the gateway's error message renders with literal `+` between words.
+  const raw = m[1].replace(/\+/g, ' ');
   try {
-    return decodeURIComponent(m[1]);
+    return decodeURIComponent(raw);
   } catch {
-    return m[1];
+    return raw;
   }
 }
 
@@ -258,11 +263,15 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
         completeSSO(code);
         return;
       }
-      // Failure / identity-mismatch: surface it and reload the login so the user lands on a
-      // clean, retry-able screen instead of a stuck WebView (parity with iOS/Android).
+      // Failure / identity-mismatch: surface it to the host AND show the failure on the FRAMEABLE embed page,
+      // which renders the "Authentication Failed" card (parity with the web/iOS/Android/Capacitor SDKs). The
+      // portal's /sso-callback page is X-Frame-Options: DENY so it can't be reused by the Capacitor iframe; all
+      // SDKs route SSO errors through the embed page. "Return to login" retries in the embed login.
       ssoInFlight.current = false;
-      onError?.(callbackParam(url, 'error') || 'sso_failed');
-      ref.current?.injectJavaScript(`window.location.replace(${JSON.stringify(embedUrl)});true;`);
+      const msg = callbackParam(url, 'error') || 'sso_failed';
+      onError?.(msg);
+      const errUrl = `${embedUrl}&sso_error=${encodeURIComponent(msg)}`;
+      ref.current?.injectJavaScript(`window.location.replace(${JSON.stringify(errUrl)});true;`);
     };
     const sub = Linking.addEventListener('url', (e) => handle(e.url));
     void Linking.getInitialURL().then(handle);
