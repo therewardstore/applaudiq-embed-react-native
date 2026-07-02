@@ -287,7 +287,13 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
       let d: {
         source?: string;
         type?: string;
-        payload?: { provider?: string; clientId?: unknown; email?: string; message?: string };
+        payload?: {
+          provider?: string;
+          clientId?: unknown;
+          email?: string;
+          message?: string;
+          url?: string;
+        };
       };
       try {
         d = JSON.parse(e.nativeEvent.data);
@@ -323,6 +329,14 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
           const clientId =
             rawClient == null ? null : typeof rawClient === 'string' ? rawClient : String(rawClient);
           openSSO(provider, clientId, d.payload?.email || null);
+          break;
+        }
+        case 'applaudiq:open-external': {
+          // Reward-store downloads / payment / OAuth: open the URL in the system browser.
+          const url = typeof d.payload?.url === 'string' ? d.payload.url : '';
+          if (url.startsWith('http://') || url.startsWith('https://')) {
+            void Linking.openURL(url);
+          }
           break;
         }
         case 'applaudiq:resize':
