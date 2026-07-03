@@ -55,6 +55,16 @@ export interface ApplaudIQEmbedProps {
   /** The user signed out of an auto / host-managed embed — tear down your app's session. */
   onSignOut?: () => void;
   /**
+   * Reward-store voucher download: called with the file bytes (base64) when the user taps "Download
+   * Vouchers" (a blob download can't reach disk inside the WebView, and RN can't cleanly bundle an
+   * optional native file lib — so the host app owns the save). Wire it to your share lib, e.g. with
+   * react-native-share (which accepts a base64 data URL, no react-native-fs needed):
+   *   onSaveFile={({ base64, filename, mime }) =>
+   *     Share.open({ url: `data:${mime};base64,${base64}`, filename }).catch(() => {})}
+   * If omitted, voucher downloads are a no-op.
+   */
+  onSaveFile?: (file: { base64: string; filename: string; mime: string }) => void;
+  /**
    * When true (default), the platform back affordance traverses the embed's in-app
    * history: Android hardware Back goes back in the WebView (until the root), and the
    * iOS left-edge swipe is enabled. Set false to keep the platform default.
@@ -174,6 +184,7 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
     onError,
     onAuthPending,
     onSignOut,
+    onSaveFile,
     backNavigation = true,
   } = props;
   const base = (config.baseUrl || DEFAULT_BASE).replace(/\/$/, '');
@@ -293,6 +304,9 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
           email?: string;
           message?: string;
           url?: string;
+          base64?: string;
+          filename?: string;
+          mime?: string;
         };
       };
       try {
@@ -339,11 +353,32 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
           }
           break;
         }
+        case 'applaudiq:save-file': {
+          // Reward-store voucher download: hand the file bytes (base64) to the host app to save/share.
+          const base64 = typeof d.payload?.base64 === 'string' ? d.payload.base64 : '';
+          const rawName = typeof d.payload?.filename === 'string' ? d.payload.filename : 'download';
+          const filename = rawName.split(/[\\/]/).pop() || 'download'; // basename only (no path traversal)
+          const mime = typeof d.payload?.mime === 'string' ? d.payload.mime : 'application/octet-stream';
+          if (base64) onSaveFile?.({ base64, filename, mime });
+          break;
+        }
         case 'applaudiq:resize':
           break; // no-op on full-screen native
       }
     },
-    [base, mode, token, sendToEmbed, openSSO, onReady, onError, onClose, onAuthPending, onSignOut],
+    [
+      base,
+      mode,
+      token,
+      sendToEmbed,
+      openSSO,
+      onReady,
+      onError,
+      onClose,
+      onAuthPending,
+      onSignOut,
+      onSaveFile,
+    ],
   );
 
   // Pin the MAIN FRAME to the portal origin: off-origin top-level navigations open in the SYSTEM

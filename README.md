@@ -20,9 +20,9 @@ manual login, and native SSO. The SDK renders the portal in a `react-native-webv
 ### 1. Install
 
 ```sh
-npm install @applaudiq/embed-react-native@^1.2.0 react-native-webview
+npm install @applaudiq/embed-react-native@^1.3.0 react-native-webview
 # or
-yarn add @applaudiq/embed-react-native@^1.2.0 react-native-webview
+yarn add @applaudiq/embed-react-native@^1.3.0 react-native-webview
 ```
 
 `react-native-webview` is a peer dependency. **Bare RN:** `cd ios && pod install`. **Expo:** `npx expo install
@@ -139,6 +139,24 @@ a file download, a payment page, or an OAuth handoff — it sends the `applaudiq
 message with payload `{ url }`. The SDK opens `http(s)` URLs in the **system browser**
 (`Linking.openURL`). No app code is required.
 
+The reward store's **gift-card voucher download** additionally sends `applaudiq:save-file` with
+`{ base64, filename, mime }`. React Native can't bundle an optional native file lib cleanly, so the host
+app owns the save via the **`onSaveFile`** prop — wire it to your share lib (e.g. `react-native-share`,
+which accepts a base64 data URL, so no `react-native-fs` is needed):
+
+```tsx
+import Share from 'react-native-share';
+
+<ApplaudIQEmbed
+  // …
+  onSaveFile={({ base64, filename, mime }) =>
+    Share.open({ url: `data:${mime};base64,${base64}`, filename }).catch(() => {})
+  }
+/>
+```
+
+If `onSaveFile` is omitted, voucher downloads are a no-op.
+
 ---
 
 ## Test integration
@@ -179,7 +197,7 @@ message with payload `{ url }`. The SDK opens `http(s)` URLs in the **system bro
 
 ## Changelog
 
-Latest: **v1.2.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
+Latest: **v1.3.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
 
 ---
 

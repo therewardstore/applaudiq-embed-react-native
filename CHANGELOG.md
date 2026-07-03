@@ -3,6 +3,14 @@
 All notable changes to `@applaudiq/embed-react-native` are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] — LTS
+
+**Reward-store voucher download.** Adds the `applaudiq:save-file` bridge message (payload
+`{ base64, filename, mime }`) surfaced via a new **`onSaveFile`** prop: the embedded reward store streams
+gift-card voucher bytes when a blob download can't reach disk in a WebView, and your app saves/shares them
+(e.g. `react-native-share` with a base64 data URL — no `react-native-fs` needed). Optional; omit
+`onSaveFile` for a no-op. Backward-compatible.
+
 ## [1.2.0] — LTS
 
 **Reward-store downloads / external links.** The SDK now handles the `applaudiq:open-external` bridge message
