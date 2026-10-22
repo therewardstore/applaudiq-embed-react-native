@@ -20,13 +20,14 @@ manual login, and native SSO. The SDK renders the portal in a `react-native-webv
 ### 1. Install
 
 ```sh
-npm install @applaudiq/embed-react-native@^1.3.0 react-native-webview
-# or
-yarn add @applaudiq/embed-react-native@^1.3.0 react-native-webview
+pnpm add @applaudiq/embed-react-native@^1.3.0 react-native-webview
 ```
 
-`react-native-webview` is a peer dependency. **Bare RN:** `cd ios && pod install`. **Expo:** `npx expo install
-react-native-webview` and use a **dev build** (`npx expo run:ios` / `run:android`) — the WebView + custom URL
+In a pnpm app, put `node-linker=hoisted` in its `.npmrc`: React Native autolinking, Pods and Gradle expect a flat
+`node_modules`.
+
+`react-native-webview` is a peer dependency. **Bare RN:** `cd ios && pod install`. **Expo:** `pnpm exec expo install
+react-native-webview` and use a **dev build** (`pnpm exec expo run:ios` / `run:android`) — the WebView + custom URL
 scheme don't work in Expo Go.
 
 ### 2. Register your SSO callback scheme
