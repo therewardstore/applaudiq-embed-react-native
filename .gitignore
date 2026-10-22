@@ -3,8 +3,8 @@ lib/
 
 # deps
 node_modules/
-# a published library doesn't ship or need a committed lockfile (it's not in `files`);
-# avoids version drift between package.json and the lock.
+# pnpm-lock.yaml is committed (installs are reproducible); it is not in `files`, so it is never published.
+# Other package managers' lockfiles are never committed.
 package-lock.json
 yarn.lock
 
