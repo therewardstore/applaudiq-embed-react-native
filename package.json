@@ -41,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/therewardstore/applaudiq-embed-react-native/issues"
   },
-  "author": "Arulraj V <abofficial1997@gmail.com>",
+  "author": "Arulraj V <arulraj@vananam.com>",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=18",
@@ -53,26 +53,24 @@
     "react": "18.2.0",
     "react-native": "0.74.0",
     "react-native-webview": "13.8.6",
-    "release-it": "^17.10.0",
+    "release-it": "^20.2.1",
     "typescript": "^5.4.0",
     "husky": "^9.1.7"
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {
     "overrides": {
-      "lodash": "^4.18.0",
-      "tmp": "^0.2.4",
       "basic-ftp": "^6.2.1",
-      "@octokit/plugin-paginate-rest": "^11.4.1",
-      "fast-xml-parser": "^5.7.0",
-      "image-size": "^2.0.3"
+      "undici@>=7.0.0 <7.29.1": "^7.29.1",
+      "react-native>@react-native-community/cli": "-",
+      "react-native>@react-native-community/cli-platform-android": "-",
+      "react-native>@react-native-community/cli-platform-ios": "-",
+      "react-native>@react-native/codegen": "-",
+      "react-native>@react-native/community-cli-plugin": "-",
+      "react-native>jest-environment-node": "-"
     },
     "auditConfig": {
-      "ignoreGhsas": [
-        "GHSA-86w9-cpqp-85rv",
-        "GHSA-hp3w-g68c-fv3c",
-        "GHSA-vfj7-8cjw-p6xm"
-      ]
+      "ignoreGhsas": []
     }
   }
 }
