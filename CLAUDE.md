@@ -99,3 +99,11 @@ type-check tooling); the package has no runtime `dependencies`, so nothing reach
 `pnpm.overrides` in `package.json` pins the patched versions of the fixable ones, and
 `pnpm.auditConfig.ignoreGhsas` lists only those with no fix anywhere: `braces` (GHSA-vfj7-8cjw-p6xm), `node-forge` and `sprintf-js` (GHSA-86w9-cpqp-85rv, GHSA-hp3w-g68c-fv3c): no fixed version. Drop an override or an
 exception as soon as an upgrade of its parent (`release-it`, `react-native`) makes it unnecessary.
+Two overrides cross a major on purpose, because no release in the old line is fixed: `tmp` 0.0 → 0.2
+(`release-it`'s editor prompt; nothing below 0.2.7 is fixed) and `basic-ftp` 5 → 6 (every 5.x is in
+GHSA-c475-qrg2-pj4r; it is only `release-it`'s proxy agent).
+Two more cross a major for the same reason, in `react-native`'s CLI tooling only:
+`fast-xml-parser` 4 → 5 (GHSA-gh4j-gqv2-49f6 has no 4.x fix) and `image-size` 1 → 2 (no 1.x is fixed).
+Metro 0.80 calls `require("image-size")` as a function, which 2.x no longer exports: harmless here because
+this repo never runs Metro (no example app), but an example app added here must drop that override and
+list the image-size advisories in `ignoreGhsas` instead.
