@@ -18,7 +18,8 @@
     "prepare": "tsc -p tsconfig.build.json",
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "release": "release-it"
+    "release": "release-it",
+    "audit:deps": "pnpm audit --audit-level=moderate"
   },
   "publishConfig": {
     "access": "public"
@@ -40,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/therewardstore/applaudiq-embed-react-native/issues"
   },
-  "author": "Arulraj V <abofficial1997@gmail.com>",
+  "author": "Arulraj V <arulraj@vananam.com>",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=18",
@@ -52,7 +53,24 @@
     "react": "18.2.0",
     "react-native": "0.74.0",
     "react-native-webview": "13.8.6",
-    "release-it": "^17.10.0",
-    "typescript": "^5.4.0"
+    "release-it": "^20.2.1",
+    "typescript": "^5.4.0",
+    "husky": "^9.1.7"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "basic-ftp": "^6.2.1",
+      "undici@>=7.0.0 <7.29.1": "^7.29.1",
+      "react-native>@react-native-community/cli": "-",
+      "react-native>@react-native-community/cli-platform-android": "-",
+      "react-native>@react-native-community/cli-platform-ios": "-",
+      "react-native>@react-native/codegen": "-",
+      "react-native>@react-native/community-cli-plugin": "-",
+      "react-native>jest-environment-node": "-"
+    },
+    "auditConfig": {
+      "ignoreGhsas": []
+    }
   }
 }
