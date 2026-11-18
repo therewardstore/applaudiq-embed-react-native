@@ -5,6 +5,10 @@ All notable changes to `@applaudiq/embed-react-native` are documented here. This
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.4.0] — LTS
+
 **Security.** The one-time `token` is no longer put in the embed URL — it is sent only by the
 `applaudiq:init-token` message. The bridge script is pinned to the main frame, and each mount exposes a
 random `window.__APPLAUDIQ_EMBED__.nonce`; a message carrying a different `nonce` is dropped.
