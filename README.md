@@ -20,7 +20,7 @@ manual login, and native SSO. The SDK renders the portal in a `react-native-webv
 ### 1. Install
 
 ```sh
-pnpm add @applaudiq/embed-react-native@^1.3.0 react-native-webview
+pnpm add @applaudiq/embed-react-native@^1.4.0 react-native-webview
 ```
 
 In a pnpm app, put `node-linker=hoisted` in its `.npmrc`: React Native autolinking, Pods and Gradle expect a flat
@@ -218,7 +218,7 @@ every pull request, in the merge queue, on every push to `master` and by hand:
 
 ## Changelog
 
-Latest: **v1.3.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
+Latest: **v1.4.0 (LTS)**. See [CHANGELOG.md](./CHANGELOG.md) for the full release history (also shown on the npm page).
 
 ---
 
