@@ -108,12 +108,12 @@ function isSecureBaseUrl(url: string): boolean {
   return scheme === 'http' && localhost && typeof __DEV__ !== 'undefined' && __DEV__;
 }
 
-/** `<baseUrl>/embed?mode={auto|manual}&k={key}` (+ `&token=` in auto, + `&env=test` for pk_test_ keys). */
-function buildEmbedUrl(base: string, mode: string, key: string, token?: string): string {
+/** `<baseUrl>/embed?mode={auto|manual}&k={key}` (+ `&env=test` for pk_test_ keys). */
+function buildEmbedUrl(base: string, mode: string, key: string): string {
   const m = mode === 'manual' ? 'manual' : 'auto';
   let url = `${base}/embed?mode=${m}`;
   if (key) url += `&k=${encodeURIComponent(key)}`;
-  if (m === 'auto' && token) url += `&token=${encodeURIComponent(token)}`;
+  // No `&token=`: the one-time token goes only via the `init-token` message, never in a logged URL.
   if (key && key.startsWith('pk_test_')) url += `&env=test`;
   return url;
 }
@@ -160,18 +160,30 @@ function callbackParam(url: string, key: 'code' | 'error'): string | null {
 // flag/mode the portal reads (isNativeEmbed / embedMode). ORIGIN-GATED — the bridge installs only
 // on the portal origin (mirror iOS `forMainFrameOnly:true` + Android `onPageStarted` sameOrigin),
 // so a navigated-to off-origin page never receives the bridge or the native flag.
-function injectedBridge(mode: string, origin: string | null): string {
+function injectedBridge(mode: string, origin: string | null, nonce: string): string {
   const m = mode === 'manual' ? 'manual' : 'auto';
   return `
     if (window.location.origin === ${JSON.stringify(origin || '')}) {
       window.parent = window.parent || window;
       window.parent.postMessage = function(data){
+        if (data && typeof data === 'object') data = Object.assign({}, data, { nonce: ${JSON.stringify(nonce)} });
         try { window.ReactNativeWebView.postMessage(JSON.stringify(data)); } catch(e){}
       };
-      window.__APPLAUDIQ_EMBED__ = { mode: ${JSON.stringify(m)}, native: true };
+      window.__APPLAUDIQ_EMBED__ = {
+        mode: ${JSON.stringify(m)}, native: true, nonce: ${JSON.stringify(nonce)}
+      };
     }
     true;
   `;
+}
+
+// Per-mount secret the page echoes as `nonce`: Android exposes the RN channel to subframes.
+function makeNonce(): string {
+  const c = (globalThis as { crypto?: { getRandomValues?: (a: Uint8Array) => Uint8Array } }).crypto;
+  const bytes = new Uint8Array(16);
+  if (typeof c?.getRandomValues === 'function') c.getRandomValues(bytes);
+  else for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
@@ -190,8 +202,9 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
   const base = (config.baseUrl || DEFAULT_BASE).replace(/\/$/, '');
   const baseOrigin = originOf(base);
   const secureBase = isSecureBaseUrl(base);
-  const embedUrl = buildEmbedUrl(base, mode, config.key, token);
+  const embedUrl = buildEmbedUrl(base, mode, config.key);
   const ref = useRef<WebView>(null);
+  const nonce = useRef(makeNonce()).current;
   const canGoBack = useRef(false);
   const ssoInFlight = useRef(false);
   const readyFired = useRef(false);
@@ -243,7 +256,8 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
           window.location.replace('/');
         } catch(e) {
           window.ReactNativeWebView.postMessage(JSON.stringify({
-            source:'applaudiq-embed', type:'applaudiq:error', payload:{ message:'sso_exchange_failed' }
+            source:'applaudiq-embed', type:'applaudiq:error', payload:{ message:'sso_exchange_failed' },
+            nonce: (window.__APPLAUDIQ_EMBED__ || {}).nonce
           }));
         }
       })(); true;`;
@@ -297,6 +311,7 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
       if (!sameOrigin(e.nativeEvent.url, base)) return;
       let d: {
         source?: string;
+        nonce?: unknown;
         type?: string;
         payload?: {
           provider?: string;
@@ -315,6 +330,8 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
         return;
       }
       if (d.source !== 'applaudiq-embed') return;
+      // A wrong nonce is a forged frame. Missing stays allowed until the portal echoes it (V-04).
+      if (d.nonce !== undefined && d.nonce !== nonce) return;
       switch (d.type) {
         case 'applaudiq:ready':
         case 'applaudiq:authenticated':
@@ -368,6 +385,7 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
     },
     [
       base,
+      nonce,
       mode,
       token,
       sendToEmbed,
@@ -404,7 +422,10 @@ export function ApplaudIQEmbed(props: ApplaudIQEmbedProps): React.ReactElement {
     <WebView
       ref={ref}
       source={{ uri: embedUrl }}
-      injectedJavaScriptBeforeContentLoaded={injectedBridge(mode, baseOrigin)}
+      injectedJavaScriptBeforeContentLoaded={injectedBridge(mode, baseOrigin, nonce)}
+      // Explicit, not the default: the bridge + nonce must never reach a (cross-origin) subframe.
+      injectedJavaScriptBeforeContentLoadedForMainFrameOnly
+      injectedJavaScriptForMainFrameOnly
       onMessage={onMessage}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       onNavigationStateChange={(s) => {
