@@ -14,11 +14,6 @@ overrides:
   react-native>@react-native/community-cli-plugin: '-'
   react-native>jest-environment-node: '-'
 
-patchedDependencies:
-  picomatch@4.0.7:
-    hash: fnlbrrb45qmkfgxp4nnbyon4uy
-    path: patches/picomatch@4.0.7.patch
-
 importers:
 
   .:
@@ -1660,9 +1655,9 @@ snapshots:
     dependencies:
       fast-string-width: 3.0.2
 
-  fdir@6.5.0(picomatch@4.0.7(patch_hash=fnlbrrb45qmkfgxp4nnbyon4uy)):
+  fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
-      picomatch: 4.0.7(patch_hash=fnlbrrb45qmkfgxp4nnbyon4uy)
+      picomatch: 4.0.7
 
   flow-enums-runtime@0.0.6: {}
 
@@ -1931,7 +1926,7 @@ snapshots:
 
   picocolors@1.1.1: {}
 
-  picomatch@4.0.7(patch_hash=fnlbrrb45qmkfgxp4nnbyon4uy): {}
+  picomatch@4.0.7: {}
 
   pkg-types@2.4.0:
     dependencies:
@@ -2183,8 +2178,8 @@ snapshots:
 
   tinyglobby@0.2.15:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.7(patch_hash=fnlbrrb45qmkfgxp4nnbyon4uy))
-      picomatch: 4.0.7(patch_hash=fnlbrrb45qmkfgxp4nnbyon4uy)
+      fdir: 6.5.0(picomatch@4.0.7)
+      picomatch: 4.0.7
 
   tslib@2.8.1: {}
 
